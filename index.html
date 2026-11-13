@@ -35,7 +35,7 @@ function load(){try{return JSON.parse(localStorage.getItem(KEY))||{accounts:[{},
 function save(){localStorage.setItem(KEY,JSON.stringify(db))}function current(){return db.accounts[account]||{}}
 function clean(s){return String(s||'').trim().replace(/^@/,'').toLowerCase()}
 function entries(o){if(Array.isArray(o))return o;if(o&&Array.isArray(o.relationships_following))return o.relationships_following;if(o&&Array.isArray(o.relationships_followers))return o.relationships_followers;return []}
-function username(e){if(typeof e==='string')return clean(e);if(!e||typeof e!=='object')return '';const d=e.string_list_data;if(Array.isArray(d)&&d.length){const v=d[0]?.value||d[0]?.href||'';if(v){const m=String(v).match(/instagram\.com\/([^/?#]+)/i);return clean(m?m[1]:v)}}return clean(e.title||e.username||'')}
+function username(e){if(typeof e==='string')return clean(e);if(!e||typeof e!=='object')return '';if(e.title||e.username)return clean(e.title||e.username);const d=e.string_list_data;if(Array.isArray(d)&&d.length){const v=d[0]?.value||d[0]?.href||'';if(v){const m=String(v).match(/instagram\.com\/(?:_u\/)?([^/?#]+)/i);return clean(m?m[1]:v)}}return ''}
 function unique(xs){return [...new Set(xs.map(username).filter(Boolean))].sort((a,b)=>a.localeCompare(b))}
 function sets(){const a=current(),f=new Set(a.followers||[]),g=new Set(a.following||[]);return{mutual:[...g].filter(x=>f.has(x)),following:[...g].filter(x=>!f.has(x)),followers:[...f].filter(x=>!g.has(x))}}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
